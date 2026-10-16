@@ -92,15 +92,21 @@ export function Calculator() {
         {/* Overlay do Formulário */}
         {/* Adicionamos md:items-center para centralizar verticalmente no PC */}
         <div className="absolute inset-0 z-10 pointer-events-none flex justify-center md:justify-start md:pl-20 md:p-4 md:items-center">
-          <div 
-            className={`pointer-events-auto w-full max-w-md absolute bottom-0 md:relative md:bottom-auto transform
+          <div
+            className={`pointer-events-auto w-full max-w-md absolute bottom-0 md:relative md:bottom-auto md:max-h-[calc(100vh-7rem)] md:overflow-y-auto transform
               ${isDragging ? '' : 'transition-transform duration-300 ease-out'}
             `}
-            style={{ 
-              // No mobile a altura é 100% para a gaveta. No PC, a altura se ajusta ao conteúdo ('auto')
+            style={{
+              // No mobile a altura é 100% para a gaveta. No PC, a altura se ajusta ao conteúdo
+              // ('auto'), até o limite de md:max-h-[calc(100vh-7rem)] (100vh menos o header
+              // fixo de 5rem e uma folga de 2rem). O overflow-y-auto tem que ficar NESTE
+              // elemento (o que tem o max-height), não só no CalculatorForm: max-height
+              // limita a altura renderizada, mas não conta como "altura definida" pro CSS
+              // resolver os h-full dos filhos — por isso o conteúdo continuava crescendo
+              // do tamanho natural e vazava por cima do limite, sem ativar scroll nenhum.
               height: window.innerWidth < 768 ? '100%' : 'auto',
               // Só aplica o translateY do arraste se for mobile
-              transform: window.innerWidth < 768 ? `translateY(${translateY}px)` : undefined 
+              transform: window.innerWidth < 768 ? `translateY(${translateY}px)` : undefined
             }}
           >
             <CalculatorForm 
